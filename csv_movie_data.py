@@ -23,3 +23,7 @@ for index, rows in movies_db[:20].iterrows():
     
     titles.append(movies_list)
     years.append(movies_year)
+
+movie_data = list(zip(titles, years))
+movies_iterate = pd.DataFrame(movie_data, columns = columns)
+movies_iterate
