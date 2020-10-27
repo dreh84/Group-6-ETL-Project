@@ -56,13 +56,14 @@ def movie_data():
     return jsonify(movie_list)
 
 
-# @app.route("/financial/rawdata")
-# session = Session
+@app.route("/financials")
+def movie_financials():
+
+    financials_pd = pd.read_sql_query('select * from movie_financials', con=engine)
+    financials_json = financials_pd.to_json(split)
+    return financials_json
 
 # @app.route("/streaming")
-
-
-
 
 
 
