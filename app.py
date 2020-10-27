@@ -36,18 +36,18 @@ def movie_data():
         movie_dict = {}
         movie_dict["Film"] = film
         movie_dict["Year"] = year
-        movie_dict["Netflix"] = netlix
+        movie_dict["Netflix"] = netflix
         movie_dict["Hulu"] = hulu
         movie_dict["Amazon Prime"] = prime_video
         movie_dict["Disney"] = disney
         movie_dict["Revenue"] = revenue
         movie_dict["budget"] = budget
         movie_dict["Profit"] = est_profit
-        movie_list.append(movie_disct)
+        movie_list.append(movie_dict)
 
     session.close()
 
-    return jsonifu(return_list)
+    return jsonify(movie_list)
 
 
 # @app.route("/financial/rawdata")
