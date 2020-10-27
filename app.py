@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 import numpy as np
 from config import pg_password
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -15,37 +16,42 @@ db_name = 'etl_movie_project_db'
 
 connection_string = f"{pg_user}:{pg_password}@localhost:5432/{db_name}"
 engine = create_engine(f'postgresql://{connection_string}')
-Base = automap_base()
-Base.prepare(engine, reflect = True)
-financials = Base.classes.movie_financials
-streaming = Base.classes.movie_streaming
-data = Base.classes.movie_data
+# Base = automap_base()
+# Base.prepare(engine, reflect = True)
+# financials = Base.classes.movie_financials
+# streaming = Base.classes.movie_streaming
+# data = Base.classes.movie_data
 
 @app.route('/')
 def home():
 
-    return(f"Welcome")
+    return(f"Welcome<br/>"
+    f"Available Routes:<br/>"
+    f"Route 1: /movie_data")
 
 @app.route("/movie_data")
 def movie_data():
-    session = Session(engine)
-    results = session.query(data.film, data.year, data.netflix, data.hulu, data.prime_video, data.disney, data.revenue, data.budget, data.est_profit).all()
-
+    # Query
+    results_pd = pd.read_sql_query('select * from movie_data', con=engine)
+    
+    # session = Session(engine)
+    # results = session.query(data.film, data.year, data.netflix, data.hulu, data.prime_video, data.disney, data.revenue, data.budget, data.est_profit).all()
+    
     movie_list = []
-    for film, year, netflix, hulu, prime_video, disney, revenue, budget, est_profit in results:
+    
+    for index, row in results_pd.iterrows():
         movie_dict = {}
-        movie_dict["Film"] = film
-        movie_dict["Year"] = year
-        movie_dict["Netflix"] = netflix
-        movie_dict["Hulu"] = hulu
-        movie_dict["Amazon Prime"] = prime_video
-        movie_dict["Disney"] = disney
-        movie_dict["Revenue"] = revenue
-        movie_dict["budget"] = budget
-        movie_dict["Profit"] = est_profit
+        movie_dict["Film"] = row['film']
+        movie_dict["Year"] = row['year']
+        movie_dict["Netflix"] = row['netflix']
+        movie_dict["Hulu"] = row['hulu']
+        movie_dict["Amazon Prime"] = row['prime_video']
+        movie_dict["Disney"] = row['disney']
+        movie_dict["Revenue"] = row['revenue']
+        movie_dict["Budget"] = row['budget']
+        movie_dict["Profit"] = row['est_profit']
         movie_list.append(movie_dict)
-
-    session.close()
+    # session.close()
 
     return jsonify(movie_list)
 
