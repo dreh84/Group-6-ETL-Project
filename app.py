@@ -27,7 +27,8 @@ def home():
 
     return(f"Welcome<br/>"
     f"Available Routes:<br/>"
-    f"Route 1: /movie_data")
+    f"Route 1: /movie_data<br/>"
+    f"Route 2: /financials")
 
 @app.route("/movie_data")
 def movie_data():
@@ -60,8 +61,8 @@ def movie_data():
 def movie_financials():
 
     financials_pd = pd.read_sql_query('select * from movie_financials', con=engine)
-    financials_json = financials_pd.to_json(split)
-    return financials_json
+    financials_json = financials_pd.to_json()
+    return jsonify(financials_json)
 
 # @app.route("/streaming")
 
