@@ -8,6 +8,7 @@ from config import pg_password
 import pandas as pd
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 #### Database Set up######
 
@@ -16,28 +17,20 @@ db_name = 'etl_movie_project_db'
 
 connection_string = f"{pg_user}:{pg_password}@localhost:5432/{db_name}"
 engine = create_engine(f'postgresql://{connection_string}')
-# Base = automap_base()
-# Base.prepare(engine, reflect = True)
-# financials = Base.classes.movie_financials
-# streaming = Base.classes.movie_streaming
-# data = Base.classes.movie_data
 
 @app.route('/')
 def home():
 
     return(f"Welcome<br/>"
     f"Available Routes:<br/>"
-    f"Route 1: /movie_data<br/>"
-    f"Route 2: /financials<br/>"
-    f"Route 3: /streaming - For streaming platforms if 1 = Available 0 = Not available on the mentioned platform")
+    f'Route 1: <a href="/movie_data">/movie_data</a><br/>'
+    f'Route 2: <a href="/financials">/financials</a><br/>'
+    f'Route 3: <a href="/streaming">/streaming</a> For streaming platforms if 1 = Available 0 = Not available on the mentioned platform')
 
 @app.route("/movie_data")
 def movie_data():
     # Query
     results_pd = pd.read_sql_query('select * from movie_data', con=engine)
-    
-    # session = Session(engine)
-    # results = session.query(data.film, data.year, data.netflix, data.hulu, data.prime_video, data.disney, data.revenue, data.budget, data.est_profit).all()
     
     movie_list = []
     
@@ -53,7 +46,7 @@ def movie_data():
         movie_dict["Budget"] = row['budget']
         movie_dict["Profit"] = row['est_profit']
         movie_list.append(movie_dict)
-    # session.close()
+
 
     return jsonify(movie_list)
 
@@ -66,7 +59,7 @@ def movie_financials():
     movie_financials = []
 
     for index, row in financials_pd.iterrows():
-        finacials_dict = {}
+        financials_dict = {}
         financials_dict['Film'] = row['film']
         financials_dict['Revenue'] = row['revenue']
         financials_dict['Budget'] = row['budget']
@@ -92,7 +85,7 @@ def streaming():
         streaming_dict['Netflix?'] = row['netflix']
         streaming_dict['Hulu?'] = row['hulu']
         streaming_dict['Amazon Prime Video'] = row['prime_video']
-        streaming_dict['Disney+'] = row['disney']
+        streaming_dict['Disney+?'] = row['disney']
         streaming_dict['Director(s)'] = row['directors']
         streaming_dict['Genres'] = row['genres']
         streaming_dict['Country'] = row['country']
