@@ -28,7 +28,8 @@ def home():
     return(f"Welcome<br/>"
     f"Available Routes:<br/>"
     f"Route 1: /movie_data<br/>"
-    f"Route 2: /financials")
+    f"Route 2: /financials<br/>"
+    f"Route 3: /streaming - For streaming platforms if 1 = Available 0 = Not available on the mentioned platform")
 
 @app.route("/movie_data")
 def movie_data():
@@ -61,10 +62,46 @@ def movie_data():
 def movie_financials():
 
     financials_pd = pd.read_sql_query('select * from movie_financials', con=engine)
-    financials_json = financials_pd.to_json()
-    return jsonify(financials_json)
+    
+    movie_financials = []
 
-# @app.route("/streaming")
+    for index, row in financials_pd.iterrows():
+        finacials_dict = {}
+        financials_dict['Film'] = row['film']
+        financials_dict['Revenue'] = row['revenue']
+        financials_dict['Budget'] = row['budget']
+        financials_dict['Profit'] = row['est_profit']
+        movie_financials.append(financials_dict)
+
+    return jsonify(movie_financials)
+
+@app.route("/streaming")
+def streaming():
+    streaming_pd = pd.read_sql_query('select * from movie_streaming', con=engine)
+
+    streaming_list = []
+
+    for index, row in streaming_pd.iterrows():
+        streaming_dict = {}
+
+        streaming_dict['Film'] = row['title']
+        streaming_dict['Year'] = row['year']
+        streaming_dict['Age Group'] = row['age']
+        streaming_dict['IMDB Rating'] = row['imdb']
+        streaming_dict['Rotten Tomatoes Rating'] = row['rotten_tomatoes']
+        streaming_dict['Netflix?'] = row['netflix']
+        streaming_dict['Hulu?'] = row['hulu']
+        streaming_dict['Amazon Prime Video'] = row['prime_video']
+        streaming_dict['Disney+'] = row['disney']
+        streaming_dict['Director(s)'] = row['directors']
+        streaming_dict['Genres'] = row['genres']
+        streaming_dict['Country'] = row['country']
+        streaming_dict['Language'] = row['language']
+        streaming_dict['Runtime'] = row['runtime']
+        streaming_list.append(streaming_dict)
+
+    return jsonify(streaming_list)
+
 
 
 
